@@ -1,17 +1,16 @@
 import Link from "next/link";
 import NavBar from "~/components/NavBar";
-import { LatestPost } from "~/components/post";
+import { LatestReview } from "~/components/review";
 import { buttonVariants } from "~/components/ui/button";
 
 import { auth } from "~/server/auth";
 import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
   const session = await auth();
 
   if (session?.user) {
-    void api.post.getLatest.prefetch();
+    void api.review.getLatest.prefetch();
   }
 
   return (
@@ -38,7 +37,7 @@ export default async function Home() {
             </p>
           </div>
 
-          {session?.user && <LatestPost />}
+          {session?.user && <LatestReview />}
         </div>
       </main>
     </HydrateClient>
