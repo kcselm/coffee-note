@@ -1,10 +1,6 @@
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const reviewRouter = createTRPCRouter({
   create: protectedProcedure
@@ -12,7 +8,7 @@ export const reviewRouter = createTRPCRouter({
       z.object({
         name: z.string().min(1),
         type: z.string(),
-        process: z.string(),
+        process: z.string().optional(),
         roastLevel: z.string(),
         acidity: z.number(),
         rating: z.number(),
@@ -31,7 +27,6 @@ export const reviewRouter = createTRPCRouter({
           rating: input.rating,
           notes: input.notes,
           roasterId: input.roasterId,
-          // createdBy: { connect: { id: ctx.session.user.id } },
         },
       });
     }),
