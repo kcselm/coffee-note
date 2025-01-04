@@ -9,11 +9,11 @@ import {
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import {
+  TooltipProvider,
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
-} from "~/components/ui/tooltip";
+} from "@radix-ui/react-tooltip";
 
 const NavBar = async () => {
   const session = await auth();
