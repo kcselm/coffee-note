@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import NavBar from "~/components/NavBar";
 import { LatestReview } from "~/components/review";
@@ -36,7 +37,16 @@ export default async function Home() {
               )}
             </p>
           </div>
-
+          {session && (
+            <Link
+              href="/add-review"
+              className={buttonVariants({
+                size: "lg",
+              })}
+            >
+              Make A New Review <ArrowRight />
+            </Link>
+          )}
           {session?.user && <LatestReview />}
         </div>
       </main>
