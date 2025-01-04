@@ -1,19 +1,19 @@
 import Link from "next/link";
-import { Coffee, Menu, X } from "lucide-react";
-import { Button, buttonVariants } from "./ui/button";
+import { Coffee } from "lucide-react";
+import { buttonVariants } from "./ui/button";
 import { auth } from "~/server/auth";
 import { ModeToggle } from "./ThemeToggle";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@radix-ui/react-popover";
+} from "~/components/ui/popover";
 import {
-  TooltipProvider,
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
-} from "@radix-ui/react-tooltip";
+} from "~/components/ui/tooltip";
 
 const NavBar = async () => {
   const session = await auth();
