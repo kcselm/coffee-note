@@ -26,7 +26,6 @@ import {
 import { useToast } from "~/hooks/use-toast";
 import { RoasterForm } from "./RoasterForm";
 import { api } from "~/trpc/react";
-import Link from "next/link";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 
 const reviewSchema = z.object({
@@ -91,8 +90,6 @@ export function ReviewForm() {
 
   async function onSubmit(data: ReviewFormValues) {
     setIsLoading(true);
-    // Here you would typically call your tRPC mutation to create a new review
-    // For example: await createReview.mutate(data)
     console.log(data);
     await createReview.mutateAsync(data);
     setIsLoading(false);

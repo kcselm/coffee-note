@@ -27,8 +27,12 @@ import {
 import { api } from "~/trpc/react";
 
 const roasterSchema = z.object({
+  id: z.string(),
   name: z.string().min(2, "Name must be at least 2 characters"),
   location: z.string().min(2, "Location must be at least 2 characters"),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  userId: z.string(),
 });
 
 type RoasterFormValues = z.infer<typeof roasterSchema>;
@@ -36,7 +40,7 @@ type RoasterFormValues = z.infer<typeof roasterSchema>;
 export function RoasterForm({
   onRoasterAdded,
 }: {
-  onRoasterAdded: (roaster: any) => void;
+  onRoasterAdded: (roaster: RoasterFormValues) => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -69,8 +73,6 @@ export function RoasterForm({
 
   async function onSubmit(data: RoasterFormValues) {
     setIsLoading(true);
-    // Here you would typically call your tRPC mutation to create a new roaster
-    // For example: const newRoaster = await createRoaster.mutate(data)
     await createRoaster.mutateAsync(data);
     setIsLoading(false);
   }
