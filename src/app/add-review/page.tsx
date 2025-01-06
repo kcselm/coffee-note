@@ -1,14 +1,15 @@
+import { redirect } from "next/navigation";
 import NavBar from "~/components/NavBar";
 import { ReviewForm } from "~/components/ReviewForm";
-import { api, HydrateClient } from "~/trpc/server";
+import { auth } from "~/server/auth";
+import { HydrateClient } from "~/trpc/server";
 
 export default async function AddReviewPage() {
-  type Roaster = {
-    id: string;
-    name: string;
-  };
+  const session = await auth();
 
-  void api.roaster.getAll.prefetch();
+  if (!session) {
+    redirect("/api/auth/signin");
+  }
   return (
     <HydrateClient>
       <NavBar />
