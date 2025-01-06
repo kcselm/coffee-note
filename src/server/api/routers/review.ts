@@ -27,6 +27,7 @@ export const reviewRouter = createTRPCRouter({
           rating: input.rating,
           notes: input.notes,
           roasterId: input.roasterId,
+          userId: ctx.session.user.id,
         },
       });
     }),
@@ -34,7 +35,9 @@ export const reviewRouter = createTRPCRouter({
   getLatest: protectedProcedure.query(async ({ ctx }) => {
     const review = await ctx.db.review.findFirst({
       orderBy: { createdAt: "desc" },
-      where: { id: ctx.session.user.id },
+      where: {
+        userId: ctx.session.user.id,
+      },
     });
     return review ?? null;
   }),

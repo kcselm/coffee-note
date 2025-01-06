@@ -7,14 +7,7 @@ import { api } from "~/trpc/react";
 export function LatestReview() {
   const [latestReview] = api.review.getLatest.useSuspenseQuery();
 
-  const utils = api.useUtils();
-  const [name, setName] = useState("");
-  const createReview = api.review.create.useMutation({
-    onSuccess: async () => {
-      await utils.review.invalidate();
-      setName("");
-    },
-  });
+  console.log("latestReview", latestReview);
 
   return (
     <div className="w-full max-w-xs">

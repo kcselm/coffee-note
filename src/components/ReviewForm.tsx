@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,7 +27,7 @@ import {
 import { useToast } from "~/hooks/use-toast";
 import { RoasterForm } from "./RoasterForm";
 import { api } from "~/trpc/react";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { useRouter } from "next/navigation";
 
 const reviewSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -52,7 +53,7 @@ type Roaster = {
 
 export function ReviewForm() {
   const [initialRoasters] = api.roaster.getAll.useSuspenseQuery();
-
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const [roasters, setRoasters] = useState(initialRoasters);
@@ -78,6 +79,7 @@ export function ReviewForm() {
         description: "Your review has been successfully added.",
       });
       form.reset();
+      router.push("/");
     },
     onError: (error) => {
       toast({
@@ -101,179 +103,184 @@ export function ReviewForm() {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <RoasterForm onRoasterAdded={handleAddRoaster} />
-        <FormField
-          control={form.control}
-          name="roasterId"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Roaster</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+    <>
+      <RoasterForm onRoasterAdded={handleAddRoaster} />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="roasterId"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Roaster</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a roaster" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {roasters.map((roaster) => (
+                      <SelectItem key={roaster.id} value={roaster.id}>
+                        {roaster.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Coffee Name</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a roaster" />
-                  </SelectTrigger>
+                  <Input placeholder="Enter coffee name" {...field} />
                 </FormControl>
-                <SelectContent>
-                  {roasters.map((roaster) => (
-                    <SelectItem key={roaster.id} value={roaster.id}>
-                      {roaster.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Coffee Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter coffee name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Coffee Type</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter coffee type" {...field} />
-              </FormControl>
-              <FormDescription>The type of coffee or variety</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="process"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Process</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Coffee Type</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Process" />
-                  </SelectTrigger>
+                  <Input placeholder="Enter coffee type" {...field} />
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="washed">Washed</SelectItem>
-                  <SelectItem value="Natural">Natural</SelectItem>
-                  <SelectItem value="Decaf">Decaf</SelectItem>
-                  <SelectItem value="swissWater">Swiss Water</SelectItem>
-                  <SelectItem value="ethylAcetate">Ethyl Acetate</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormDescription>(optional)</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="roastLevel"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Roast Level</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormDescription className="pl-1">
+                  The type or variety of coffee
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="process"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Process</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Process" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="washed">Washed</SelectItem>
+                    <SelectItem value="Natural">Natural</SelectItem>
+                    <SelectItem value="Decaf">Decaf</SelectItem>
+                    <SelectItem value="swissWater">Swiss Water</SelectItem>
+                    <SelectItem value="ethylAcetate">Ethyl Acetate</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription className="pl-1">(optional)</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="roastLevel"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Roast Level</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select roast level" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="light">Light</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="dark">Dark</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="acidity"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Acidity (1-10)</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select roast level" />
-                  </SelectTrigger>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={10}
+                    {...field}
+                    onChange={(e) => field.onChange(+e.target.value)}
+                  />
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="acidity"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Acidity (1-10)</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min={1}
-                  max={10}
-                  {...field}
-                  onChange={(e) => field.onChange(+e.target.value)}
-                />
-              </FormControl>
-              <FormDescription>
-                Rate the acidity of the coffee from 1 to 10.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="rating"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Overall Rating (1-10)</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min={1}
-                  max={10}
-                  {...field}
-                  onChange={(e) => field.onChange(+e.target.value)}
-                />
-              </FormControl>
-              <FormDescription>
-                Rate the overall experience of the coffee from 1 to 10.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="notes"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tasting Notes</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Enter your tasting notes" {...field} />
-              </FormControl>
-              <FormDescription>
-                Describe the flavors, aromas, and overall experience of the
-                coffee.{" "}
-                <Dialog>
-                  <DialogTrigger>Click Here</DialogTrigger>
-                  <DialogContent></DialogContent>
-                </Dialog>{" "}
-                for inspiration
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Submitting..." : "Submit Review"}
-        </Button>
-      </form>
-    </Form>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="rating"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Overall Rating (1-10)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={10}
+                    {...field}
+                    onChange={(e) => field.onChange(+e.target.value)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="notes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Notes</FormLabel>
+                <FormControl>
+                  <Textarea placeholder="Enter your notes" {...field} />
+                </FormControl>
+                <FormDescription className="pl-1">
+                  Describe the flavors, aromas, and overall experience of the
+                  coffee.{" "}
+                  <Link
+                    className="font-bold text-black dark:text-white"
+                    href="https://utfs.io/f/xXWEGP6YN24f2CQOkymxPQ5qKcSW2wLrCF4imZ3XIsnlfjyB"
+                    target={"_blank"}
+                  >
+                    Click Here
+                  </Link>{" "}
+                  for inpiration
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? "Submitting..." : "Submit Review"}
+          </Button>
+        </form>
+      </Form>
+    </>
   );
 }

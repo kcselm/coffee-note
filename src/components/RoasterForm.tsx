@@ -19,20 +19,25 @@ import { useToast } from "~/hooks/use-toast";
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "~/components/ui/dialog";
 import { api } from "~/trpc/react";
 
+type Roaster = {
+  id: string;
+  name: string;
+  location: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+};
+
 const roasterSchema = z.object({
-  id: z.string(),
   name: z.string().min(2, "Name must be at least 2 characters"),
   location: z.string().min(2, "Location must be at least 2 characters"),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  userId: z.string(),
 });
 
 type RoasterFormValues = z.infer<typeof roasterSchema>;
@@ -40,9 +45,10 @@ type RoasterFormValues = z.infer<typeof roasterSchema>;
 export function RoasterForm({
   onRoasterAdded,
 }: {
-  onRoasterAdded: (roaster: RoasterFormValues) => void;
+  onRoasterAdded: (roaster: Roaster) => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<RoasterFormValues>({
@@ -78,10 +84,14 @@ export function RoasterForm({
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Add New Roaster</Button>
-      </DialogTrigger>
+    <Dialog open={isOpen}>
+      <Button
+        variant="outline"
+        className="my-4"
+        onClick={() => setIsOpen(true)}
+      >
+        Add New Roaster
+      </Button>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add New Roaster</DialogTitle>
@@ -97,9 +107,6 @@ export function RoasterForm({
                   <FormControl>
                     <Input placeholder="Enter roaster name" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    The name of the coffee roaster.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -113,16 +120,28 @@ export function RoasterForm({
                   <FormControl>
                     <Input placeholder="Enter roaster location" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    The location of the roaster.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Adding..." : "Add Roaster"}
-            </Button>
+            <div className="flex gap-4">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                onClick={() => setIsOpen(false)}
+              >
+                {isLoading ? "Adding..." : "Add Roaster"}
+              </Button>
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Close
+                </Button>
+              </DialogClose>
+            </div>
           </form>
         </Form>
       </DialogContent>
