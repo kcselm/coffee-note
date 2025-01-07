@@ -33,7 +33,7 @@ export function ReviewDetails({ review }: ReviewDetailsProps) {
           </div>
           <div>
             <Label>Process</Label>
-            <p>{review.process || "N/A"}</p>
+            <p>{review.process ?? "N/A"}</p>
           </div>
           <div>
             <Label>Roast Level</Label>
