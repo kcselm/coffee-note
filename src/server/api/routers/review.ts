@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -32,6 +33,18 @@ export const reviewRouter = createTRPCRouter({
       });
     }),
 
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db.review.findMany({
+      orderBy: { createdAt: "desc" },
+      where: {
+        userId: ctx.session.user.id,
+      },
+      include: {
+        roaster: true,
+      },
+    });
+  }),
+
   getLatest: protectedProcedure.query(async ({ ctx }) => {
     const review = await ctx.db.review.findFirst({
       orderBy: { createdAt: "desc" },
@@ -41,4 +54,24 @@ export const reviewRouter = createTRPCRouter({
     });
     return review ?? null;
   }),
+
+  getById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.id },
+        include: {
+          roaster: true,
+        },
+      });
+
+      if (!review || review.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found or you do not have permission to view it.",
+        });
+      }
+
+      return review;
+    }),
 });

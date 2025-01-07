@@ -38,14 +38,24 @@ export default async function Home() {
             </p>
           </div>
           {session && (
-            <Link
-              href="/add-review"
-              className={buttonVariants({
-                size: "lg",
-              })}
-            >
-              Make A New Review <ArrowRight />
-            </Link>
+            <div className="flex gap-4">
+              <Link
+                href="/reviews"
+                className={buttonVariants({
+                  size: "lg",
+                })}
+              >
+                My Reviews
+              </Link>
+              <Link
+                href="/add-review"
+                className={buttonVariants({
+                  size: "lg",
+                })}
+              >
+                Make A New Review <ArrowRight />
+              </Link>
+            </div>
           )}
           {session?.user && <LatestReview />}
         </div>
