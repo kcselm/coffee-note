@@ -4,10 +4,11 @@ import { api, HydrateClient } from "~/trpc/server";
 export default async function ReviewPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const review = await api.review.getById({
-    id: params.id,
+    id: id,
   });
 
   if (!review) {
