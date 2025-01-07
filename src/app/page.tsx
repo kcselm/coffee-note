@@ -17,26 +17,24 @@ export default async function Home() {
   return (
     <HydrateClient>
       <NavBar />
-      <main className="flex min-h-screen flex-col items-center justify-center">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
+      <main className="flex min-h-screen flex-col items-center">
+        <div className="container flex flex-col items-center justify-center gap-6 px-4 py-28">
           <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
             <span className="text-yellow-800 dark:text-yellow-700">Coffee</span>{" "}
             Note
           </h1>
-          <div className="flex flex-col items-center justify-center gap-4">
-            <p className="text-center text-2xl">
-              {!session && (
-                <Link
-                  href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                  className={buttonVariants({
-                    size: "lg",
-                  })}
-                >
-                  {session ? "Sign out" : "Sign in"}
-                </Link>
-              )}
-            </p>
-          </div>
+          <p className="text-center text-2xl">
+            {!session && (
+              <Link
+                href={session ? "/api/auth/signout" : "/api/auth/signin"}
+                className={buttonVariants({
+                  size: "lg",
+                })}
+              >
+                {session ? "Sign out" : "Sign in"}
+              </Link>
+            )}
+          </p>
           {session && (
             <div className="flex gap-4">
               <Link
@@ -57,9 +55,14 @@ export default async function Home() {
               </Link>
             </div>
           )}
-          {session?.user && <LatestReview />}
         </div>
       </main>
+      <div className="fixed inset-x-0 bottom-0 h-1/2">
+        <img
+          src="https://utfs.io/f/xXWEGP6YN24fmrpc4pq4GUB7OATFdy5DMW1NYIS0mCuLQw6v"
+          className="h-full w-full object-cover grayscale"
+        />
+      </div>
     </HydrateClient>
   );
 }
