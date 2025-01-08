@@ -14,11 +14,12 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { Coffee, Droplet, Star, Calendar, Trash2 } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/trpc/react";
+import { PopoverClose } from "@radix-ui/react-popover";
 
 type ReviewDetailsProps = {
   review: {
@@ -156,9 +157,13 @@ export function ReviewDetails({ review }: ReviewDetailsProps) {
                   </p>
                 </div>
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => {}}>
+                  <PopoverClose
+                    className={buttonVariants({
+                      size: "default",
+                    })}
+                  >
                     Cancel
-                  </Button>
+                  </PopoverClose>
                   <Button
                     variant="destructive"
                     onClick={handleDelete}
