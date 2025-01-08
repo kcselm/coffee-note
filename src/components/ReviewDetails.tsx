@@ -133,7 +133,7 @@ export function ReviewDetails({ review }: ReviewDetailsProps) {
         </div>
         <div className="mt-6">
           <h3 className="mb-2 font-semibold">Process</h3>
-          <p>{review.process || "Not specified"}</p>
+          <p>{review.process ?? "Not specified"}</p>
         </div>
         <div className="mt-6">
           <h3 className="mb-2 font-semibold">Tasting Notes</h3>
