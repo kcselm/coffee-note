@@ -270,7 +270,7 @@ export function ReviewForm() {
                   >
                     Click Here
                   </Link>{" "}
-                  for inpiration
+                  for inspiration
                 </FormDescription>
                 <FormMessage />
               </FormItem>
