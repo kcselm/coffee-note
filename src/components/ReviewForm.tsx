@@ -37,7 +37,7 @@ const reviewSchema = z.object({
   acidity: z.number().min(1).max(10),
   rating: z.number().min(1).max(10),
   notes: z.string().min(10, "Notes must be at least 10 characters"),
-  roasterId: z.string(),
+  roasterId: z.string().min(1, "Please select a roaster"),
 });
 
 type ReviewFormValues = z.infer<typeof reviewSchema>;
@@ -79,7 +79,7 @@ export function ReviewForm() {
         description: "Your review has been successfully added.",
       });
       form.reset();
-      router.push("/");
+      router.push("/reviews");
     },
     onError: (error) => {
       toast({
