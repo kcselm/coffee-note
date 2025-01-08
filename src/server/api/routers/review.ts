@@ -74,4 +74,26 @@ export const reviewRouter = createTRPCRouter({
 
       return review;
     }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!review || review.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message:
+            "Review not found or you do not have permission to delete it.",
+        });
+      }
+
+      await ctx.db.review.delete({
+        where: { id: input.id },
+      });
+
+      return { success: true };
+    }),
 });
