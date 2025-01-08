@@ -15,6 +15,7 @@ import { api } from "~/trpc/react";
 import { ReviewFilter } from "./ReviewFilter";
 
 type SortField =
+  | "createdAt"
   | "name"
   | "type"
   | "roastLevel"
@@ -32,8 +33,8 @@ export function ReviewsTable() {
     coffeeType: "",
     highRated: false,
   });
-  const [sortField, setSortField] = useState<SortField>("name");
-  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+  const [sortField, setSortField] = useState<SortField>("createdAt");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
   const { data: reviews, isLoading } = api.review.getAll.useQuery();
 
@@ -77,6 +78,18 @@ export function ReviewsTable() {
       <Table className="rounded-lg border p-8 shadow-sm">
         <TableHeader>
           <TableRow>
+            <TableHead
+              onClick={() => handleSort("createdAt")}
+              className="cursor-pointer"
+            >
+              Created At{" "}
+              {sortField === "createdAt" &&
+                (sortOrder === "asc" ? (
+                  <ChevronUp className="inline" />
+                ) : (
+                  <ChevronDown className="inline" />
+                ))}
+            </TableHead>
             <TableHead
               onClick={() => handleSort("name")}
               className="cursor-pointer"
@@ -158,6 +171,7 @@ export function ReviewsTable() {
               onClick={() => handleRowClick(review.id)}
               className="cursor-pointer hover:bg-muted/50"
             >
+              <TableCell>{review.createdAt.toLocaleDateString()}</TableCell>
               <TableCell>{review.name}</TableCell>
               <TableCell>{review.type}</TableCell>
               <TableCell>{review.roaster.name}</TableCell>
