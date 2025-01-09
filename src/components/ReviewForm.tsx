@@ -64,7 +64,7 @@ export function ReviewForm() {
       name: "",
       type: "",
       process: "",
-      roastLevel: "",
+      roastLevel: "medium",
       acidity: 5,
       rating: 5,
       notes: "",

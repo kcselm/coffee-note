@@ -42,7 +42,9 @@ export function ReviewsTable() {
     return (
       (filters.coffeeName === "" ||
         review.name.toLowerCase().includes(filters.coffeeName.toLowerCase())) &&
-      (filters.roastLevel === "" || review.roastLevel === filters.roastLevel) &&
+      (filters.roastLevel === "" ||
+        filters.roastLevel === "all" ||
+        review.roastLevel === filters.roastLevel) &&
       (filters.coffeeType === "" ||
         review.type.toLowerCase().includes(filters.coffeeType.toLowerCase())) &&
       (!filters.highRated || review.rating >= 8)
