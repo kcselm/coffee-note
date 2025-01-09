@@ -50,19 +50,17 @@ const NavBar = async () => {
                 })}
               />
             </PopoverTrigger>
-            <PopoverContent className="p-2">
-              <div className="">
-                <Link
-                  href="/api/auth/signout"
-                  className={buttonVariants({ size: "default" })}
-                >
-                  Sign{" "}
-                  <span className="text-md font-extrabold">
-                    {session.user.name}
-                  </span>{" "}
-                  Out
-                </Link>
-              </div>
+            <PopoverContent className="w-48 p-2">
+              <Link
+                href="/api/auth/signout"
+                className={buttonVariants({ size: "default" })}
+              >
+                Sign{" "}
+                <span className="text-md font-extrabold">
+                  {session.user.name}
+                </span>{" "}
+                Out
+              </Link>
             </PopoverContent>
           </Popover>
         )}
