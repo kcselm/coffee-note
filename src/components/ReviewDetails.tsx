@@ -39,7 +39,7 @@ type ReviewDetailsProps = {
   };
 };
 
-function getRatingColor(rating: number): string {
+export function getRatingColor(rating: number): string {
   if (rating >= 9) return "bg-green-500";
   if (rating >= 7) return "bg-lime-500";
   if (rating >= 5) return "bg-yellow-500";
