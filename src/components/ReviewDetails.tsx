@@ -60,19 +60,11 @@ function getAcidityDescription(acidity: number): string {
 export function ReviewDetails({ review: initialReview }: ReviewDetailsProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [review, setReview] = useState(initialReview);
   const router = useRouter();
   const { toast } = useToast();
 
   const utils = api.useUtils();
-
-  // Use client-side query with initial data from server
-  const { data: review } = api.review.getById.useQuery(
-    { id: initialReview.id },
-    {
-      initialData: initialReview,
-      refetchOnWindowFocus: false,
-    },
-  );
 
   const deleteReview = api.review.delete.useMutation({
     onSuccess: () => {
@@ -97,9 +89,11 @@ export function ReviewDetails({ review: initialReview }: ReviewDetailsProps) {
     deleteReview.mutate({ id: review.id });
   };
 
-  const handleEditSuccess = (updatedReview: typeof review) => {
+  const handleEditSuccess = (updatedReview: any) => {
     setIsEditing(false);
-    // Optimistically update the cache with the new data
+    // Update local state with the new data
+    setReview(updatedReview);
+    // Also update the cache for consistency
     utils.review.getById.setData({ id: review.id }, updatedReview);
   };
 
