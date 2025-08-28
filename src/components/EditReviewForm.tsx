@@ -114,7 +114,7 @@ export function EditReviewForm({
         return {
           ...oldData,
           ...newData,
-          roaster: selectedRoaster || oldData.roaster,
+          roaster: selectedRoaster ?? oldData.roaster,
         };
       });
 
