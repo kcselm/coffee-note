@@ -22,23 +22,25 @@ import { api } from "~/trpc/react";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { EditReviewForm } from "./EditReviewForm";
 
-type ReviewDetailsProps = {
-  review: {
+type Review = {
+  id: string;
+  name: string;
+  type: string;
+  process: string | null;
+  roastLevel: string;
+  acidity: number;
+  rating: number;
+  notes: string;
+  roaster: {
     id: string;
     name: string;
-    type: string;
-    process: string | null;
-    roastLevel: string;
-    acidity: number;
-    rating: number;
-    notes: string;
-    roaster: {
-      id: string;
-      name: string;
-      location: string;
-    };
-    createdAt: Date;
+    location: string;
   };
+  createdAt: Date;
+};
+
+type ReviewDetailsProps = {
+  review: Review;
 };
 
 export function getRatingColor(rating: number): string {
@@ -89,12 +91,15 @@ export function ReviewDetails({ review: initialReview }: ReviewDetailsProps) {
     deleteReview.mutate({ id: review.id });
   };
 
-  const handleEditSuccess = (updatedReview: any) => {
+  const handleEditSuccess = (updatedReview: Review) => {
     setIsEditing(false);
     // Update local state with the new data
     setReview(updatedReview);
-    // Also update the cache for consistency
-    utils.review.getById.setData({ id: review.id }, updatedReview);
+    // Also update the cache for consistency (cast to match expected type)
+    utils.review.getById.setData(
+      { id: review.id },
+      updatedReview as Parameters<typeof utils.review.getById.setData>[1],
+    );
   };
 
   const handleEditCancel = () => {

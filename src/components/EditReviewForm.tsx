@@ -48,25 +48,27 @@ type Roaster = {
   userId: string;
 };
 
-type EditReviewFormProps = {
-  review: {
+type Review = {
+  id: string;
+  name: string;
+  type: string;
+  process: string | null;
+  roastLevel: string;
+  acidity: number;
+  rating: number;
+  notes: string;
+  roaster: {
     id: string;
     name: string;
-    type: string;
-    process: string | null;
-    roastLevel: string;
-    acidity: number;
-    rating: number;
-    notes: string;
-    roaster: {
-      id: string;
-      name: string;
-      location: string;
-    };
-    createdAt: Date;
+    location: string;
   };
+  createdAt: Date;
+};
+
+type EditReviewFormProps = {
+  review: Review;
   onCancel: () => void;
-  onSuccess: (updatedReview: any) => void;
+  onSuccess: (updatedReview: Review) => void;
 };
 
 export function EditReviewForm({
@@ -124,7 +126,8 @@ export function EditReviewForm({
         title: "Review updated",
         description: "Your review has been successfully updated.",
       });
-      onSuccess(updatedReview);
+      // Cast the server response to match our Review type
+      onSuccess(updatedReview as Review);
     },
     onError: (error, newData, context) => {
       // If the mutation fails, use the context returned from onMutate to roll back
