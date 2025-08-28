@@ -75,6 +75,51 @@ export const reviewRouter = createTRPCRouter({
       return review;
     }),
 
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string().min(1),
+        type: z.string(),
+        process: z.string().optional(),
+        roastLevel: z.string(),
+        acidity: z.number(),
+        rating: z.number(),
+        notes: z.string(),
+        roasterId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const review = await ctx.db.review.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!review || review.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message:
+            "Review not found or you do not have permission to update it.",
+        });
+      }
+
+      return ctx.db.review.update({
+        where: { id: input.id },
+        data: {
+          name: input.name,
+          type: input.type,
+          process: input.process,
+          roastLevel: input.roastLevel,
+          acidity: input.acidity,
+          rating: input.rating,
+          notes: input.notes,
+          roasterId: input.roasterId,
+        },
+        include: {
+          roaster: true,
+        },
+      });
+    }),
+
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {

@@ -13,13 +13,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { Coffee, Droplet, Star, Calendar, Trash2 } from "lucide-react";
+import { Coffee, Droplet, Star, Calendar, Trash2, Edit } from "lucide-react";
 import { Button, buttonVariants } from "./ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/trpc/react";
 import { PopoverClose } from "@radix-ui/react-popover";
+import { EditReviewForm } from "./EditReviewForm";
 
 type ReviewDetailsProps = {
   review: {
@@ -32,6 +33,7 @@ type ReviewDetailsProps = {
     rating: number;
     notes: string;
     roaster: {
+      id: string;
       name: string;
       location: string;
     };
@@ -55,10 +57,22 @@ function getAcidityDescription(acidity: number): string {
   return "Very Low";
 }
 
-export function ReviewDetails({ review }: ReviewDetailsProps) {
+export function ReviewDetails({ review: initialReview }: ReviewDetailsProps) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+
+  const utils = api.useUtils();
+
+  // Use client-side query with initial data from server
+  const { data: review } = api.review.getById.useQuery(
+    { id: initialReview.id },
+    {
+      initialData: initialReview,
+      refetchOnWindowFocus: false,
+    },
+  );
 
   const deleteReview = api.review.delete.useMutation({
     onSuccess: () => {
@@ -82,6 +96,33 @@ export function ReviewDetails({ review }: ReviewDetailsProps) {
     setIsDeleting(true);
     deleteReview.mutate({ id: review.id });
   };
+
+  const handleEditSuccess = (updatedReview: typeof review) => {
+    setIsEditing(false);
+    // Optimistically update the cache with the new data
+    utils.review.getById.setData({ id: review.id }, updatedReview);
+  };
+
+  const handleEditCancel = () => {
+    setIsEditing(false);
+  };
+
+  if (isEditing) {
+    return (
+      <Card className="mx-auto max-w-3xl">
+        <CardHeader className="border-b">
+          <CardTitle className="text-2xl">Edit Review</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <EditReviewForm
+            review={review}
+            onCancel={handleEditCancel}
+            onSuccess={handleEditSuccess}
+          />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="mx-auto max-w-3xl">
@@ -140,7 +181,15 @@ export function ReviewDetails({ review }: ReviewDetailsProps) {
           <h3 className="mb-2 font-semibold">Tasting Notes</h3>
           <p className="italic">{review.notes}</p>
         </div>
-        <CardFooter className="flex justify-end">
+        <CardFooter className="flex justify-end space-x-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setIsEditing(true)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" size="icon">
